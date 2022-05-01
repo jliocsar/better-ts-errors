@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, submitCount },
+    formState: { errors, submitCount, isSubmitting },
   } = useForm<FormData>({
     defaultValues: {
       error: ERROR_EXAMPLE,
@@ -85,7 +85,9 @@ const Home: NextPage = () => {
               required
               {...register('error', formOptions.error)}
             ></textarea>
-            <button className={styles.button}>Parse this out</button>
+            <button className={styles.button} disabled={isSubmitting}>
+              Parse this out
+            </button>
           </form>
           {errorTemplate && (
             <section className={styles.section}>
