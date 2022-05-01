@@ -1,0 +1,21 @@
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  padding: 2rem 0;
+  font-size: 1.6rem;
+}
+
+.footer .link {
+  color: #999;
+  text-decoration: underline;
+  text-decoration-thickness: 0.2rem;
+  text-decoration-color: transparent;
+  transition: 150ms ease-in-out;
+}
+
+.footer .link:hover {
+  color: var(--text-color);
+  text-decoration-color: var(--text-color);
+}

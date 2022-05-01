@@ -1,5 +1,5 @@
 export const createTypeScriptErrorTemplate = (errors: string[]) => `
-## TypeScript Errors
+## TypeScript Errors (${errors.length})
 ${errors
   .map(
     (error, index) => `

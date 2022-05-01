@@ -1,0 +1,91 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  min-height: 100vh;
+  margin: auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+}
+
+.titleIcon,
+.title {
+  text-align: center;
+}
+
+.titleIcon {
+  margin: 2rem 0 0;
+  font-size: 4rem;
+}
+
+.title {
+  margin: 1rem 0;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem auto 3rem auto;
+  width: 100%;
+}
+
+.section,
+.form {
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form .textarea,
+.form .button {
+  font-size: 1.4rem;
+  border-radius: 0.25rem;
+}
+
+.form .textarea {
+  background: #eee;
+  resize: none;
+  padding: 1.4rem;
+  font-weight: 500;
+  font-size: 1.6rem;
+}
+
+.form .button {
+  margin: 2.4rem auto 0 auto;
+  line-height: 2.4;
+  background: #229955;
+  border: 0.1rem solid #44bb77;
+  color: #ddffee;
+  cursor: pointer;
+  transition: filter 200ms ease-in-out;
+  min-width: 20rem;
+}
+
+.form .button:hover {
+  filter: brightness(0.8);
+}
+
+.markdown {
+  overflow-x: auto;
+}
+
+.markdown h3 {
+  color: #666;
+  font-weight: 500;
+}
+
+.markdown h3:not(:first-of-type) {
+  margin-top: 6rem;
+}
+
+.divider {
+  margin-top: 4rem;
+  border-color: #666;
+}
