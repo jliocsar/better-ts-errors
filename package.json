@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "devDependencies": {
+    "turbo": "^1.2.5",
+    "typescript": "^4.6.3"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@better-ts-errors/engine",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --experimental-loader esbuild-node-loader src/example.ts"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@ts-stack/markdown": "^1.4.0",
+    "esbuild-node-loader": "^0.8.0",
+    "highlight.js": "^11.5.1"
+  }
+}

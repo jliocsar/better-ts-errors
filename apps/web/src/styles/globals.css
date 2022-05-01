@@ -1,0 +1,50 @@
+:root {
+  --background-color: #080808;
+  --text-color: #ddd;
+}
+
+html,
+body,
+textarea,
+button {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+textarea,
+code {
+  font-family: JetBrains Mono, monospace;
+}
+
+html {
+  font-size: 10px;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background-color);
+  color: var(--text-color);
+  font-size: 1.8rem;
+  line-height: 1.6;
+}
+
+code {
+  background: #151515;
+  padding: 1rem 1.5rem;
+  border-radius: 0.25rem;
+  font-size: 1.6rem;
+}
