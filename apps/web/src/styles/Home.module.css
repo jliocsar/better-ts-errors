@@ -6,10 +6,6 @@
   margin: 1rem auto 3rem auto;
 }
 
-.main h3:not(:first-of-type) {
-  margin-top: 6rem;
-}
-
 .section,
 .form {
   width: 100%;
@@ -50,6 +46,10 @@
 
 .markdown {
   overflow-x: auto;
+}
+
+.markdown h3:not(:first-of-type) {
+  margin-top: 6rem;
 }
 
 .divider {
