@@ -13,7 +13,7 @@ export const Footer = () => (
         ts-error-translator
       </a>{' '}
     </small>
-    <small>
+    <small className={styles.signature}>
       Made with <span className={styles.heart}>❤</span> by{' '}
       <a
         target="_blank"

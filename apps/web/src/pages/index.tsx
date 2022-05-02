@@ -68,7 +68,7 @@ const Home: NextPage = () => {
         <title>Better TS Errors</title>
         <meta
           name="description"
-          content="A simple parser for visualizing a simplified version of TS errors."
+          content="A parser and formatter for visualizing a simplified version of TS errors."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -21,7 +21,12 @@
   text-decoration-color: var(--text-color);
 }
 
+.signature {
+  font-size: 1.1rem;
+}
+
 .heart {
   color: #e74c3c;
   font-size: 1.6rem;
+  vertical-align: sub;
 }
