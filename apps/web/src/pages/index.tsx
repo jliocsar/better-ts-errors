@@ -4,6 +4,7 @@ import * as React from 'react'
 import { RegisterOptions, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
+import type { ResponseData } from '~/types/response'
 import { Footer } from '~/components/footer'
 import { Header } from '~/components/header'
 import { ERROR_EXAMPLE } from '~/constants/errors-examples'
@@ -24,7 +25,8 @@ const formOptions: FormRegisterOptions = {
 }
 
 const Home: NextPage = () => {
-  const [errorTemplate, setErrorTemplate] = React.useState('')
+  const [{ template, wasInvalidErrorMessage, errorCount }, setData] =
+    React.useState<Partial<ResponseData>>({})
   const {
     register,
     handleSubmit,
@@ -42,9 +44,9 @@ const Home: NextPage = () => {
           method: 'POST',
           body: error,
         })
-        const { content } = await response.json()
+        const responseData: ResponseData = await response.json()
 
-        return setErrorTemplate(content)
+        return setData(responseData)
       } catch (error) {
         console.error(error)
       }
@@ -90,15 +92,28 @@ const Home: NextPage = () => {
               Parse this out
             </button>
           </form>
-          {errorTemplate && (
+          {template && (
             <section className={styles.section}>
-              <hr className={styles.divider} />
-              <div
-                className={styles.markdown}
-                dangerouslySetInnerHTML={{
-                  __html: errorTemplate,
-                }}
-              />
+              {wasInvalidErrorMessage ? (
+                <div className={styles.empty}>
+                  <h2 className={styles.typeScriptErrorsTitle}>
+                    No errors found 😔
+                  </h2>
+                </div>
+              ) : (
+                <>
+                  <hr className={styles.divider} />
+                  <h2 className={styles.typeScriptErrorsTitle}>
+                    TypeScript Errors ({errorCount})
+                  </h2>
+                  <div
+                    className={styles.markdown}
+                    dangerouslySetInnerHTML={{
+                      __html: template as string,
+                    }}
+                  />
+                </>
+              )}
             </section>
           )}
         </main>

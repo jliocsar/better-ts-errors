@@ -61,7 +61,7 @@
 
 .markdown {
   overflow-x: auto;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
 
 .markdown h3 {
@@ -76,6 +76,21 @@
 .divider {
   margin-top: 4rem;
   border-color: #666;
+}
+
+.typeScriptErrorsTitle {
+  margin-bottom: 0;
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+}
+
+.empty .typeScriptErrorsTitle {
+  font-size: 2.2rem;
+  font-weight: 400;
 }
 
 @media screen and (min-width: 1024px) {

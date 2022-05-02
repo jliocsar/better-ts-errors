@@ -9,9 +9,19 @@
   font-size: 4rem;
 }
 
+.titleSection {
+  display: flex;
+  flex-direction: column;
+}
+
 .title {
   font-size: 1.6rem;
-  margin: 1rem 0;
+  margin: 1rem 0 0;
+}
+
+.subtitle {
+  font-size: 1.4rem;
+  color: #999;
 }
 
 @media screen and (min-width: 600px) {
@@ -32,5 +42,9 @@
   .title,
   .titleIcon {
     text-align: center;
+  }
+
+  .subtitle {
+    margin: auto;
   }
 }

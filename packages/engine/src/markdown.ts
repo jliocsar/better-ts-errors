@@ -29,7 +29,17 @@ Marked.setOptions({
 
 export const createTypeScriptErrorMarkdown = async (errorMessage: string) => {
   const parsedErrors = parseErrorMessage(errorMessage)
+  const errorCount = parsedErrors.length
   const typeScriptErrorsTemplate = createTypeScriptErrorTemplate(parsedErrors)
   const highlightCssTheme = `<style>${theme}</style>`
-  return [highlightCssTheme, Marked.parse(typeScriptErrorsTemplate)].join('\n')
+  const template = [
+    highlightCssTheme,
+    Marked.parse(typeScriptErrorsTemplate),
+  ].join('\n')
+
+  return {
+    template,
+    errorCount,
+    wasInvalidErrorMessage: !errorCount,
+  }
 }
