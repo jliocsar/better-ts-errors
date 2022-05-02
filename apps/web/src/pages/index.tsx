@@ -5,6 +5,7 @@ import { RegisterOptions, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
 import { Footer } from '~/components/footer'
+import { Header } from '~/components/header'
 import { ERROR_EXAMPLE } from '~/constants/errors-examples'
 
 import styles from './home.module.css'
@@ -70,10 +71,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.container}>
-        <header className={styles.header}>
-          <b className={styles.titleIcon}>🦩</b>
-          <h1 className={styles.title}>Fill in your TypeScript error</h1>
-        </header>
+        <Header />
         <main className={styles.main}>
           <form
             className={styles.form}

@@ -1,5 +1,5 @@
 :root {
-  --background-color: #080808;
+  --background-color: #111;
   --text-color: #ddd;
 }
 
@@ -17,7 +17,7 @@ code {
 }
 
 html {
-  font-size: 10px;
+  font-size: clamp(calc(10px + 0.1vw), 10px, 16px);
 }
 
 html,

@@ -1,0 +1,36 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.titleIcon {
+  font-size: 4rem;
+}
+
+.title {
+  font-size: 1.6rem;
+  margin: 1rem 0;
+}
+
+@media screen and (min-width: 600px) {
+  .title {
+    font-size: 2.2rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 2.6rem;
+  }
+
+  .title,
+  .titleIcon {
+    text-align: center;
+  }
+}

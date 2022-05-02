@@ -4,25 +4,7 @@
   max-width: 900px;
   min-height: 100vh;
   margin: auto;
-}
-
-.header {
-  display: flex;
-  flex-direction: column;
-}
-
-.titleIcon,
-.title {
-  text-align: center;
-}
-
-.titleIcon {
-  margin: 2rem 0 0;
-  font-size: 4rem;
-}
-
-.title {
-  margin: 1rem 0;
+  padding: 0 1.8rem;
 }
 
 .main {
@@ -54,7 +36,7 @@
   resize: none;
   padding: 1.4rem;
   font-weight: 500;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
 
 .form .button {
@@ -79,6 +61,7 @@
 
 .markdown {
   overflow-x: auto;
+  font-size: 1.6rem;
 }
 
 .markdown h3 {
@@ -93,4 +76,10 @@
 .divider {
   margin-top: 4rem;
   border-color: #666;
+}
+
+@media screen and (min-width: 1024px) {
+  .container {
+    padding: 0;
+  }
 }

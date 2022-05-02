@@ -1,5 +1,6 @@
 .footer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: auto;
@@ -18,4 +19,9 @@
 .footer .link:hover {
   color: var(--text-color);
   text-decoration-color: var(--text-color);
+}
+
+.heart {
+  color: #e74c3c;
+  font-size: 1.6rem;
 }

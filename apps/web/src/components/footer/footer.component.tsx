@@ -3,7 +3,7 @@ import styles from './footer.module.css'
 export const Footer = () => (
   <footer className={styles.footer}>
     <small>
-      Based on{' '}
+      Inspired by{' '}
       <a
         target="_blank"
         href="https://github.com/mattpocock/ts-error-translator"
@@ -12,14 +12,16 @@ export const Footer = () => (
       >
         ts-error-translator
       </a>{' '}
-      by{' '}
+    </small>
+    <small>
+      Made with <span className={styles.heart}>❤</span> by{' '}
       <a
         target="_blank"
-        href="https://twitter.com/mpocock1"
+        href="https://github.com/jliocsar"
         rel="noopener noreferrer"
         className={styles.link}
       >
-        Matt Pocock
+        jliocsar
       </a>
     </small>
   </footer>
