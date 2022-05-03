@@ -1,11 +1,13 @@
 {
-  "name": "@better-ts-errors/engine",
+  "name": "@better-ts-errors/parser",
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "test": "node --experimental-loader esbuild-node-loader src/example.ts"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node": "^17.0.31"
+  },
   "dependencies": {
     "@ts-stack/markdown": "^1.4.0",
     "esbuild-node-loader": "^0.8.0",

@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { ResponseData } from '~/types/response'
-import { createTypeScriptErrorMarkdown } from '@better-ts-errors/engine'
+import { createTypeScriptErrorMarkdown } from '@better-ts-errors/parser'
 
 export default async function handler(
   req: NextApiRequest,

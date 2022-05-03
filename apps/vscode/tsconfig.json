@@ -1,0 +1,21 @@
+{
+  "extends": "../../packages/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+		"target": "ES2020",
+		"outDir": "out",
+		"lib": ["ES2020"],
+		"sourceMap": true,
+		"rootDir": "src",
+		"strict": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@better-ts-errors/parser": ["../../packages/parser/src"],
+      "~/*": ["src/*"]
+    }
+  }
+}

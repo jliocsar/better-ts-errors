@@ -1,0 +1,56 @@
+{
+  "name": "better-ts-errors",
+  "version": "1.0.1",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.66.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jliocsar/better-ts-errors"
+  },
+  "bugs": {
+    "url": "https://github.com/jliocsar/better-ts-errors/issues"
+  },
+  "galleryBanner": {
+    "color": "#111"
+  },
+  "categories": [
+    "Education",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "keywords": [
+    "typescript"
+  ],
+  "publisher": "better-ts-errors",
+  "contributes": {
+    "configuration": {
+      "title": "Better TS Errors",
+      "properties": {
+        "betterTypeScriptErrors.showParsedMessages": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the parsed version of the error message"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run build",
+    "build": "esbuild --bundle --platform=\"node\" src/extension.ts --outfile=out/extension.js --external:vscode --format=cjs",
+    "publish": "npx vsce publish --yarn"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^17.0.31",
+    "@types/vscode": "^1.66.0",
+    "esbuild": "^0.14.38",
+    "typescript": "^4.6.4",
+    "vscode": "^1.1.37"
+  }
+}

@@ -1,4 +1,4 @@
-const withTM = require('next-transpile-modules')(['@better-ts-errors/engine'])
+const withTM = require('next-transpile-modules')(['@better-ts-errors/parser'])
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

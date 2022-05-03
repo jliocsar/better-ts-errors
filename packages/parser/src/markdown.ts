@@ -27,7 +27,7 @@ Marked.setOptions({
   },
 })
 
-export const createTypeScriptErrorMarkdown = async (errorMessage: string) => {
+export const createTypeScriptErrorMarkdown = (errorMessage: string) => {
   const parsedErrors = parseErrorMessage(errorMessage)
   const errorCount = parsedErrors.length
   const typeScriptErrorsTemplate = createTypeScriptErrorTemplate(parsedErrors)
