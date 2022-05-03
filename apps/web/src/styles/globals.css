@@ -1,6 +1,7 @@
 :root {
   --background-color: #111;
-  --text-color: #ddd;
+  --text-color: #eee;
+  --toastify-color-error: #e74c3c;
 }
 
 html,
@@ -12,7 +13,8 @@ button {
 }
 
 textarea,
-code {
+code,
+kbd {
   font-family: JetBrains Mono, monospace;
 }
 
@@ -43,8 +45,12 @@ body {
 }
 
 code {
-  background: #151515;
+  background: #222;
   padding: 1rem 1.5rem;
   border-radius: 0.25rem;
   font-size: 1.4rem;
+}
+
+kbd {
+  font-weight: 500;
 }

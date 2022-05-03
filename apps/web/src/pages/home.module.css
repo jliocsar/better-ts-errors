@@ -1,13 +1,14 @@
 .container {
   display: flex;
   flex-direction: column;
-  max-width: 900px;
+  max-width: 90rem;
   min-height: 100vh;
   margin: auto;
   padding: 0 1.8rem;
 }
 
 .main {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,6 +92,32 @@
 .empty .typeScriptErrorsTitle {
   font-size: 2.2rem;
   font-weight: 400;
+}
+
+.toast {
+  background: #222;
+  font-size: 1.4rem;
+}
+
+.keybind {
+  background: #eee;
+  padding: 0.2rem 0.25rem;
+  line-height: 1.8;
+}
+
+.tooltip {
+  animation: fade-in-and-out 2s ease-in-out;
+}
+
+@keyframes fade-in-and-out {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
 }
 
 @media screen and (min-width: 1024px) {

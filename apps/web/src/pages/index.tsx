@@ -1,13 +1,15 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import * as React from 'react'
-import { RegisterOptions, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import { RegisterOptions, SubmitHandler, useForm } from 'react-hook-form'
+import { Options as HotkeysOptions, useHotkeys } from 'react-hotkeys-hook'
 
 import type { ResponseData } from '~/types/response'
 import { Footer } from '~/components/footer'
 import { Header } from '~/components/header'
 import { ERROR_EXAMPLE } from '~/constants/errors-examples'
+import { Tooltip } from '~/components/tooltip'
 
 import styles from './home.module.css'
 
@@ -18,6 +20,9 @@ type FormRegisterOptions = {
   [key in keyof FormData]: RegisterOptions<FormData>
 }
 
+const hotkeysOptions: HotkeysOptions = {
+  enableOnTags: ['TEXTAREA'],
+}
 const formOptions: FormRegisterOptions = {
   error: {
     required: 'Enter an error message',
@@ -25,13 +30,18 @@ const formOptions: FormRegisterOptions = {
 }
 
 const Home: NextPage = () => {
+  const submitRef = React.useRef<HTMLButtonElement>(null)
+  const [hasUsedHotkeys, setHasUsedHotkeys] = React.useState(false)
+
   const [{ template, wasInvalidErrorMessage, errorCount }, setData] =
     React.useState<Partial<ResponseData>>({})
   const {
     register,
     handleSubmit,
-    formState: { errors, submitCount, isSubmitting },
+    setFocus,
+    formState: { errors, submitCount, isSubmitting, isSubmitted },
   } = useForm<FormData>({
+    mode: 'onChange',
     defaultValues: {
       error: ERROR_EXAMPLE,
     },
@@ -54,13 +64,25 @@ const Home: NextPage = () => {
     [],
   )
 
+  const handleCtrlEnterPress = React.useCallback(() => {
+    setHasUsedHotkeys(true)
+    submitRef.current?.click()
+  }, [])
+
   React.useEffect(() => {
     if (errors.error) {
       toast.error(errors.error.message, {
         theme: 'dark',
+        className: styles.toast,
       })
     }
   }, [errors, submitCount])
+
+  React.useEffect(() => {
+    setFocus('error')
+  }, [])
+
+  useHotkeys('ctrl+enter', handleCtrlEnterPress, hotkeysOptions)
 
   return (
     <>
@@ -75,11 +97,18 @@ const Home: NextPage = () => {
       <div className={styles.container}>
         <Header />
         <main className={styles.main}>
+          {isSubmitted && !hasUsedHotkeys && (
+            <Tooltip className={styles.tooltip}>
+              You can also use <kbd className={styles.keybind}>CTRL+Enter</kbd>
+              <br />
+              to submit the form 😄
+            </Tooltip>
+          )}
           <form
+            autoComplete="off"
             className={styles.form}
             onSubmit={handleSubmit(onSubmit)}
             noValidate
-            autoComplete="off"
           >
             <textarea
               className={styles.textarea}
@@ -88,7 +117,11 @@ const Home: NextPage = () => {
               required
               {...register('error', formOptions.error)}
             ></textarea>
-            <button className={styles.button} disabled={isSubmitting}>
+            <button
+              className={styles.button}
+              disabled={isSubmitting}
+              ref={submitRef}
+            >
               Parse this out
             </button>
           </form>

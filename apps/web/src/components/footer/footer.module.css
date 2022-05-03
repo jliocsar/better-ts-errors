@@ -26,7 +26,7 @@
 }
 
 .heart {
-  color: #e74c3c;
+  color: var(--toastify-color-error);
   font-size: 1.6rem;
   vertical-align: sub;
 }
