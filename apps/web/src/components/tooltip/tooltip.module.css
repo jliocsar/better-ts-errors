@@ -1,4 +1,3 @@
-/* Adds an absolute position to the container, floating it to the right and using a delicate box shadow with a very light gray background. This also adds a very dark gray text color, combined with a tooltip-sized width & height */
 .container {
   position: absolute;
   right: -1rem;

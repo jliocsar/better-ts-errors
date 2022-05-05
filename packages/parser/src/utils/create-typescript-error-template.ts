@@ -1,11 +1,21 @@
-export const createTypeScriptErrorTemplate = (errors: string[]) => `
-${errors
-  .map(
-    (error, index) => `
-### Error ${index + 1}
+import type { CreateTypeScriptErrorMarkdownOptions } from '../markdown'
+
+export const createTypeScriptErrorTemplate = (
+  errors: string[],
+  options?: CreateTypeScriptErrorMarkdownOptions,
+) =>
+  errors
+    .map((error, index) => {
+      const errorPosition = index + 1
+      return `
+${
+  options?.useStyles
+    ? `### Error ${errorPosition}`
+    : `**Error ${errorPosition}:**`
+}
 
 ${error}
-`,
-  )
-  .join('\n')}
+${!options?.useStyles ? '\n---' : ''}
 `
+    })
+    .join('\n')

@@ -5,6 +5,15 @@ import { createTypeScriptErrorTemplate } from './utils/create-typescript-error-t
 import { parseErrorMessage } from './utils/parse-error-message'
 import { theme } from './styles/theme'
 
+export type CreateTypeScriptErrorMarkdownOptions = {
+  useStyles?: boolean
+}
+
+const defaultCreateTypeScriptErrorMarkdownOptions: CreateTypeScriptErrorMarkdownOptions =
+  {
+    useStyles: true,
+  }
+
 Marked.setOptions({
   renderer: new Renderer(),
   gfm: true,
@@ -27,15 +36,24 @@ Marked.setOptions({
   },
 })
 
-export const createTypeScriptErrorMarkdown = (errorMessage: string) => {
+export const createTypeScriptErrorMarkdown = (
+  errorMessage: string,
+  createOptions?: CreateTypeScriptErrorMarkdownOptions,
+) => {
+  const options = {
+    ...defaultCreateTypeScriptErrorMarkdownOptions,
+    ...createOptions,
+  }
   const parsedErrors = parseErrorMessage(errorMessage)
   const errorCount = parsedErrors.length
-  const typeScriptErrorsTemplate = createTypeScriptErrorTemplate(parsedErrors)
+  const typeScriptErrorsTemplate = createTypeScriptErrorTemplate(
+    parsedErrors,
+    options,
+  )
   const highlightCssTheme = `<style>${theme}</style>`
-  const template = [
-    highlightCssTheme,
-    Marked.parse(typeScriptErrorsTemplate),
-  ].join('\n')
+  const template = options.useStyles
+    ? [highlightCssTheme, Marked.parse(typeScriptErrorsTemplate)].join('\n')
+    : typeScriptErrorsTemplate
 
   return {
     template,

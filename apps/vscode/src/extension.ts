@@ -11,6 +11,7 @@ const defaultOptions: Options = {
 let options = defaultOptions
 
 export function activate(context: vscode.ExtensionContext) {
+  console.info('Activating `better-ts-errors`')
   const uriStore: Record<vscode.Uri['path'], UriStoreValue[]> = {}
 
   const updateOptions = () => {
@@ -69,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
         const diagnostics = vscode.languages.getDiagnostics(uri)
         const items: UriStoreValue[] = []
 
-        diagnostics.forEach(async diagnostic => {
+        diagnostics.forEach(diagnostic => {
           const errorMarkdown = parseDiagnostic(diagnostic, options)
 
           if (errorMarkdown) {
@@ -85,4 +86,6 @@ export function activate(context: vscode.ExtensionContext) {
   )
 }
 
-export function deactivate() {}
+export function deactivate() {
+  console.info('Deactivating `better-ts-errors`')
+}
