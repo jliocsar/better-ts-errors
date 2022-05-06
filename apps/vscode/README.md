@@ -6,7 +6,7 @@ Simply enable the `better-ts-errors` extension in your VSCode and hover a TS err
 
 ## Preview
 
-![extension preview](.github/preview.png)
+![extension preview](https://i.imgur.com/4OUDSIT.png)
 
 You can also preview how the parsing works in the [web application](https://better-ts-errors.vercel.app/).
 
