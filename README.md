@@ -9,8 +9,3 @@ The main idea is to use this tool as a VSCode extension, but it will be used as 
 It's still under development and will most likely change in the future.
 
 This project was highly inspired by [ts-error-translator](https://github.com/mattpocock/ts-error-translator) from [Matt Pocock](https://twitter.com/mpocock1).
-
-## To do list
-
-- [ ] Create VSCode extension
-- [ ] Add license
