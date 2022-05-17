@@ -1,9 +1,7 @@
-import { Marked, Renderer } from '@ts-stack/markdown'
-import hljs from 'highlight.js'
-
+import { getThemeStyleTag } from './utils/get-theme-style-tag'
 import { createTypeScriptErrorTemplate } from './utils/create-typescript-error-template'
 import { parseErrorMessage } from './utils/parse-error-message'
-import { theme } from './styles/theme'
+import { parseMarkdown } from './utils/parse-markdown'
 
 export type CreateTypeScriptErrorMarkdownOptions = {
   useStyles?: boolean
@@ -13,28 +11,6 @@ const defaultCreateTypeScriptErrorMarkdownOptions: CreateTypeScriptErrorMarkdown
   {
     useStyles: true,
   }
-
-Marked.setOptions({
-  renderer: new Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: false,
-  highlight: (code, language) => {
-    if (!language) {
-      throw new Error(`No language specified for code block: ${code}`)
-    }
-
-    const { value: highlightedCode } = hljs.highlight(code, {
-      language,
-    })
-
-    return highlightedCode
-  },
-})
 
 export const createTypeScriptErrorMarkdown = (
   errorMessage: string,
@@ -50,9 +26,8 @@ export const createTypeScriptErrorMarkdown = (
     parsedErrors,
     options,
   )
-  const highlightCssTheme = `<style>${theme}</style>`
   const template = options.useStyles
-    ? [highlightCssTheme, Marked.parse(typeScriptErrorsTemplate)].join('\n')
+    ? [getThemeStyleTag(), parseMarkdown(typeScriptErrorsTemplate)].join('\n')
     : typeScriptErrorsTemplate
 
   return {

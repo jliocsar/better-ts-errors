@@ -6,11 +6,11 @@
     "test": "node --experimental-loader esbuild-node-loader src/example.ts"
   },
   "devDependencies": {
+    "@types/markdown-it": "^12.2.3",
     "@types/node": "^17.0.31"
   },
   "dependencies": {
-    "@ts-stack/markdown": "^1.4.0",
     "esbuild-node-loader": "^0.8.0",
-    "highlight.js": "^11.5.1"
+    "markdown-it": "^13.0.1"
   }
 }
