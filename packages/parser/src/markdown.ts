@@ -1,13 +1,13 @@
 import { getThemeStyleTag } from './utils/get-theme-style-tag'
-import { createTypeScriptErrorTemplate } from './utils/create-typescript-error-template'
+import { createTypeScriptErrorMarkdownTemplate } from './utils/create-typescript-error-markdown-template'
 import { parseErrorMessage } from './utils/parse-error-message'
 import { parseMarkdown } from './utils/parse-markdown'
 
 export type CreateTypeScriptErrorMarkdownOptions = {
-  useStyles?: boolean
+  useStyles: boolean
 }
 
-const defaultCreateTypeScriptErrorMarkdownOptions: CreateTypeScriptErrorMarkdownOptions =
+export const defaultCreateTypeScriptErrorMarkdownOptions: CreateTypeScriptErrorMarkdownOptions =
   {
     useStyles: true,
   }
@@ -22,13 +22,14 @@ export const createTypeScriptErrorMarkdown = (
   }
   const parsedErrors = parseErrorMessage(errorMessage)
   const errorCount = parsedErrors.length
-  const typeScriptErrorsTemplate = createTypeScriptErrorTemplate(
-    parsedErrors,
-    options,
-  )
+  const typeScriptErrorsMarkdownTemplate =
+    createTypeScriptErrorMarkdownTemplate(parsedErrors, options)
   const template = options.useStyles
-    ? [getThemeStyleTag(), parseMarkdown(typeScriptErrorsTemplate)].join('\n')
-    : typeScriptErrorsTemplate
+    ? [
+        getThemeStyleTag(),
+        parseMarkdown(typeScriptErrorsMarkdownTemplate),
+      ].join('\n')
+    : typeScriptErrorsMarkdownTemplate
 
   return {
     template,

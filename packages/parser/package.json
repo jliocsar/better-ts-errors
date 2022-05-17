@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "esbuild-node-loader": "^0.8.0",
+    "highlight.js": "^11.5.1",
     "markdown-it": "^13.0.1"
   }
 }
