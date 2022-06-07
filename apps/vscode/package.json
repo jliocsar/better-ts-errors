@@ -43,7 +43,7 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run build",
-    "build": "esbuild --bundle --platform=\"node\" src/extension.ts --outfile=out/extension.js --external:vscode --format=cjs",
+    "build": "esbuild --minify --bundle --platform=\"node\" src/extension.ts --outfile=out/extension.js --external:vscode --format=cjs",
     "publish": "npx vsce publish --yarn"
   },
   "dependencies": {},
