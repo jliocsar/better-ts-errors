@@ -13,7 +13,7 @@ export const parseDiagnostic = (
     return null
   }
 
-  const { template } = parser.createTypeScriptErrorMarkdown(
+  const { template } = parser.typeScriptErrorDiagnosticToMarkdown(
     diagnostic.message,
     {
       useStyles: false,

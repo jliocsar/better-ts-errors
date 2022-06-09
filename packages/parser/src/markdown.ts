@@ -1,26 +1,28 @@
-import { getThemeStyleTag } from './utils/get-theme-style-tag'
-import { createTypeScriptErrorMarkdownTemplate } from './utils/create-typescript-error-markdown-template'
-import { parseErrorMessage } from './utils/parse-error-message'
-import { parseMarkdown } from './utils/parse-markdown'
+import {
+  translateDiagnosticToMarkdown,
+  createTypeScriptErrorMarkdownTemplate,
+  getThemeStyleTag,
+  parseMarkdown,
+} from './utils'
 
-export type CreateTypeScriptErrorMarkdownOptions = {
+export type TypeScriptErrorDiagnosticMarkdownOptions = {
   useStyles: boolean
 }
 
-export const defaultCreateTypeScriptErrorMarkdownOptions: CreateTypeScriptErrorMarkdownOptions =
+export const defaultTypeScriptErrorDiagnosticMarkdownOptions: TypeScriptErrorDiagnosticMarkdownOptions =
   {
     useStyles: true,
   }
 
-export const createTypeScriptErrorMarkdown = (
-  errorMessage: string,
-  createOptions?: CreateTypeScriptErrorMarkdownOptions,
+export const typeScriptErrorDiagnosticToMarkdown = (
+  diagnosticErrorMessage: string,
+  createOptions?: TypeScriptErrorDiagnosticMarkdownOptions,
 ) => {
   const options = {
-    ...defaultCreateTypeScriptErrorMarkdownOptions,
+    ...defaultTypeScriptErrorDiagnosticMarkdownOptions,
     ...createOptions,
   }
-  const parsedErrors = parseErrorMessage(errorMessage)
+  const parsedErrors = translateDiagnosticToMarkdown(diagnosticErrorMessage)
   const errorCount = parsedErrors.length
   const typeScriptErrorsMarkdownTemplate =
     createTypeScriptErrorMarkdownTemplate(parsedErrors, options)
