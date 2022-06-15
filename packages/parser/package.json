@@ -2,15 +2,16 @@
   "name": "@better-ts-errors/parser",
   "version": "0.0.3",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "test": "node --experimental-loader esbuild-node-loader src/example.ts"
+    "test": "node --loader @esbuild-kit/esm-loader src/example.ts"
   },
   "devDependencies": {
+    "@esbuild-kit/esm-loader": "^2.2.0",
     "@types/markdown-it": "^12.2.3",
     "@types/node": "^17.0.31"
   },
   "dependencies": {
-    "esbuild-node-loader": "^0.8.0",
     "highlight.js": "^11.5.1",
     "markdown-it": "^13.0.1"
   }

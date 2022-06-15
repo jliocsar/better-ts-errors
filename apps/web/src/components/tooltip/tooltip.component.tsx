@@ -9,7 +9,7 @@ type TooltipProps = {
 }
 
 export const Tooltip = ({
-  delay = 2000,
+  delay = 10000,
   className,
   children,
 }: TooltipProps) => {
@@ -18,6 +18,10 @@ export const Tooltip = ({
   const tooltipClassName = className
     ? `${className} ${styles.container}`
     : styles.container
+
+  const handleOnMouseOver = React.useCallback(() => {
+    setIsVisible(false)
+  }, [])
 
   React.useEffect(() => {
     if (isVisible) {
@@ -30,7 +34,11 @@ export const Tooltip = ({
   }
 
   return (
-    <div role="tooltip" className={tooltipClassName}>
+    <div
+      role="tooltip"
+      className={tooltipClassName}
+      onMouseOver={handleOnMouseOver}
+    >
       <p className={styles.content}>{children}</p>
     </div>
   )

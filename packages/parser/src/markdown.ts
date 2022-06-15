@@ -1,6 +1,6 @@
 import {
   translateDiagnosticToMarkdown,
-  createTypeScriptErrorMarkdownTemplate,
+  createTypeScriptErrorsMarkdownTemplate,
   getThemeStyleTag,
   parseMarkdown,
 } from './utils'
@@ -25,7 +25,7 @@ export const typeScriptErrorDiagnosticToMarkdown = (
   const parsedErrors = translateDiagnosticToMarkdown(diagnosticErrorMessage)
   const errorCount = parsedErrors.length
   const typeScriptErrorsMarkdownTemplate =
-    createTypeScriptErrorMarkdownTemplate(parsedErrors, options)
+    createTypeScriptErrorsMarkdownTemplate(parsedErrors, options)
   const template = options.useStyles
     ? [
         getThemeStyleTag(),
