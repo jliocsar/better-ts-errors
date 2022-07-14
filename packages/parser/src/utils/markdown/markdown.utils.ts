@@ -34,10 +34,10 @@ const createMarkdownItem = (item: string) =>
 const createMarkdownList = (list: string) =>
   `\n${list.split(', ').map(createMarkdownItem).join('\n')}`
 
-const replaceErrorPartsByMarkdown = (error: string) => {
-  let result = error
+const replaceErrorPartsByMarkdown = (errorMessage: string) => {
+  let result = errorMessage
 
-  const matchedList = error.match(PROPERTIES_LIST_REGEX)
+  const matchedList = errorMessage.match(PROPERTIES_LIST_REGEX)
   if (matchedList) {
     const [originalList, commaSeparatedList] = matchedList
     result = result.replace(
@@ -53,7 +53,7 @@ const createTypeScriptErrorMarkdownTemplate =
   (
     options: TypeScriptErrorDiagnosticMarkdownOptions = defaultTypeScriptErrorDiagnosticMarkdownOptions,
   ) =>
-  (error: string, index: number) => {
+  (errorMessage: string, index: number) => {
     const errorPosition = index + 1
     return `
 ${
@@ -62,16 +62,30 @@ ${
     : `**Error #${errorPosition}:**`
 }
 
-${error}
+${errorMessage}
 ${!options.useStyles ? '\n---' : ''}
 `
   }
 
-const translateErrorToMarkdown = (error: string) => {
-  const codeBlockedError = error.replace(
-    TYPESCRIPT_SNIPPET_REGEX,
-    createTypeScriptCodeblock,
+const higienizeErrorCandidate = (errorCandidate: string) =>
+  !errorCandidate.endsWith(' ')
+
+const mapErrorsToMarkdown = (errorMessage: string, errors: string[]) =>
+  [...new Set(errors)].reduce(
+    (result, error) => result.replace(`'${error}'`, createTypeScriptCodeblock),
+    errorMessage,
   )
+
+const translateErrorToMarkdown = (errorMessage: string) => {
+  const errorCandidates = errorMessage
+    .match(TYPESCRIPT_SNIPPET_REGEX)
+    ?.filter(higienizeErrorCandidate)
+
+  if (!errorCandidates) {
+    return errorMessage
+  }
+
+  const codeBlockedError = mapErrorsToMarkdown(errorMessage, errorCandidates)
   return replaceErrorPartsByMarkdown(codeBlockedError)
 }
 
@@ -88,8 +102,10 @@ export const createTypeScriptCodeblock = (code: string) => {
 }
 
 export const translateDiagnosticToMarkdown = (errorMessage: string) => {
-  const errors = errorMessage
+  const higienizedErrorMessage = errorMessage
     .replace(/\.$/, '')
-    .split(TYPESCRIPT_ERROR_BOUNDARY)
+    .replace(/|\s{2,}/, '')
+  const errors = higienizedErrorMessage.split(TYPESCRIPT_ERROR_BOUNDARY)
+
   return errors.map(translateErrorToMarkdown)
 }
