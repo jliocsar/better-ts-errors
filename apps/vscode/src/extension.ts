@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
         return null
       }
 
-      const [itemInRange] = itemsInUriStore.filter(item =>
+      const itemInRange = itemsInUriStore.find(item =>
         item.range.contains(position),
       )
 
@@ -66,11 +66,20 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.languages.onDidChangeDiagnostics(event => {
-      event.uris.forEach(uri => {
-        const diagnostics = vscode.languages.getDiagnostics(uri)
-        const items: UriStoreValue[] = []
+      const { uris } = event
+      const urisLength = uris.length
+      let uriIndex = 0
 
-        diagnostics.forEach(diagnostic => {
+      while (uriIndex < urisLength) {
+        const items: UriStoreValue[] = []
+        const uri = uris[uriIndex]
+
+        const diagnostics = vscode.languages.getDiagnostics(uri)
+        const diagnosticsLength = diagnostics.length
+        let diagnosticIndex = 0
+
+        while (diagnosticIndex < diagnosticsLength) {
+          const diagnostic = diagnostics[diagnosticIndex]
           const errorMarkdown = parseDiagnostic(diagnostic, options)
 
           if (errorMarkdown) {
@@ -79,9 +88,13 @@ export function activate(context: vscode.ExtensionContext) {
               contents: [errorMarkdown],
             })
           }
-        })
+
+          ++diagnosticIndex
+        }
+
         uriStore[uri.path] = items
-      })
+        ++uriIndex
+      }
     }),
   )
 }

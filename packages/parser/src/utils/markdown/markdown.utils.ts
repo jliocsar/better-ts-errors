@@ -68,18 +68,19 @@ ${!options.useStyles ? '\n---' : ''}
   }
 
 const higienizeErrorCandidate = (errorCandidate: string) =>
-  !errorCandidate.endsWith(' ')
+  errorCandidate.trim()
 
 const mapErrorsToMarkdown = (errorMessage: string, errors: string[]) =>
   [...new Set(errors)].reduce(
-    (result, error) => result.replace(`'${error}'`, createTypeScriptCodeblock),
+    (result, error) => result.replace(error, createTypeScriptCodeblock),
     errorMessage,
   )
 
 const translateErrorToMarkdown = (errorMessage: string) => {
   const errorCandidates = errorMessage
+    .trim()
     .match(TYPESCRIPT_SNIPPET_REGEX)
-    ?.filter(higienizeErrorCandidate)
+    ?.map(higienizeErrorCandidate)
 
   if (!errorCandidates) {
     return errorMessage
@@ -106,6 +107,5 @@ export const translateDiagnosticToMarkdown = (errorMessage: string) => {
     .replace(/\.$/, '')
     .replace(/|\s{2,}/, '')
   const errors = higienizedErrorMessage.split(TYPESCRIPT_ERROR_BOUNDARY)
-
   return errors.map(translateErrorToMarkdown)
 }
