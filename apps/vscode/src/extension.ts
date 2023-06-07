@@ -6,6 +6,7 @@ import { parseDiagnostic } from './parse-diagnostic'
 const EXTENSION_OPTION_KEY = 'betterTypeScriptErrors'
 const defaultOptions: Options = {
   showParsedMessages: true,
+  prettify: false,
 }
 
 let options = defaultOptions
@@ -30,6 +31,10 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }),
   )
+
+  if (!options.showParsedMessages) {
+    return
+  }
 
   const hoverProvider: vscode.HoverProvider = {
     provideHover: (document, position) => {
@@ -67,33 +72,26 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.onDidChangeDiagnostics(event => {
       const { uris } = event
-      const urisLength = uris.length
-      let uriIndex = 0
 
-      while (uriIndex < urisLength) {
+      for (const uri of uris) {
         const items: UriStoreValue[] = []
-        const uri = uris[uriIndex]
-
         const diagnostics = vscode.languages.getDiagnostics(uri)
-        const diagnosticsLength = diagnostics.length
-        let diagnosticIndex = 0
 
-        while (diagnosticIndex < diagnosticsLength) {
-          const diagnostic = diagnostics[diagnosticIndex]
+        for (const diagnostic of diagnostics) {
+          if (diagnostic.source !== 'ts') {
+            continue
+          }
           const errorMarkdown = parseDiagnostic(diagnostic, options)
-
+          console.log({ errorMarkdown })
           if (errorMarkdown) {
             items.push({
               range: diagnostic.range,
               contents: [errorMarkdown],
             })
           }
-
-          ++diagnosticIndex
         }
 
         uriStore[uri.path] = items
-        ++uriIndex
       }
     }),
   )

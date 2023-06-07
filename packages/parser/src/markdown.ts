@@ -7,11 +7,13 @@ import {
 
 export type TypeScriptErrorDiagnosticMarkdownOptions = {
   useStyles: boolean
+  prettify?: boolean
 }
 
 export const defaultTypeScriptErrorDiagnosticMarkdownOptions: TypeScriptErrorDiagnosticMarkdownOptions =
   {
     useStyles: true,
+    prettify: false,
   }
 
 export const typeScriptErrorDiagnosticToMarkdown = (

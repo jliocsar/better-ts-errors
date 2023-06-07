@@ -37,6 +37,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show the parsed version of the error message"
+        },
+        "betterTypeScriptErrors.prettify": {
+          "type": "boolean",
+          "default": false,
+          "description": "Shows a prettified version of the error message"
         }
       }
     }

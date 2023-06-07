@@ -80,7 +80,7 @@ const Home: NextPage = () => {
 
   React.useEffect(() => {
     setFocus('error')
-  }, [])
+  }, [setFocus])
 
   useHotkeys('ctrl+enter', handleCtrlEnterPress, hotkeysOptions)
 

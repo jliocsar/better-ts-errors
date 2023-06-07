@@ -20,10 +20,8 @@ const renderer = new MarkdownIt({
       const { value } = hljs.highlight(code, {
         language,
       })
-
       return value
     }
-
     return code
   },
 })
@@ -55,16 +53,22 @@ const createTypeScriptErrorMarkdownTemplate =
   ) =>
   (errorMessage: string, index: number) => {
     const errorPosition = index + 1
+    const { prettify, useStyles } = options
+    let title = `**Error #${errorPosition}:**`
+
+    if (useStyles) {
+      title = `### Error ${errorPosition}`
+    } else if (prettify) {
+      title = `**\`⚠️ Error #${errorPosition}\`**`
+    }
+
     return `
-${
-  options.useStyles
-    ? `### Error ${errorPosition}`
-    : `**Error #${errorPosition}:**`
-}
+${title}
 
 ${errorMessage}
+
 ${!options.useStyles ? '\n---' : ''}
-`
+`.trim()
   }
 
 const higienizeErrorCandidate = (errorCandidate: string) =>

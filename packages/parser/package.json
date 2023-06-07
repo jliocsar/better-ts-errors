@@ -8,10 +8,12 @@
   },
   "devDependencies": {
     "@esbuild-kit/esm-loader": "^2.2.0",
+    "@types/dedent": "^0.7.0",
     "@types/markdown-it": "^12.2.3",
     "@types/node": "^17.0.31"
   },
   "dependencies": {
+    "dedent": "^0.7.0",
     "highlight.js": "^11.5.1",
     "markdown-it": "^13.0.1"
   }

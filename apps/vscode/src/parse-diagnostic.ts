@@ -7,18 +7,14 @@ import type { Options } from './types'
 
 export const parseDiagnostic = (
   diagnostic: vscode.Diagnostic,
-  _options: Options,
+  options: Options,
 ) => {
-  if (diagnostic.source !== 'ts') {
-    return null
-  }
-
   const { template } = parser.typeScriptErrorDiagnosticToMarkdown(
     diagnostic.message,
     {
       useStyles: false,
+      prettify: options.prettify,
     },
   )
-
   return new vscode.MarkdownString(template)
 }
