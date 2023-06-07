@@ -4,7 +4,7 @@ import hljs from 'highlight.js'
 import {
   TypeScriptErrorDiagnosticMarkdownOptions,
   defaultTypeScriptErrorDiagnosticMarkdownOptions,
-} from '_markdown'
+} from '../../markdown'
 
 import {
   OBJECT_PROPERTIES_AND_REGEX,
