@@ -82,7 +82,6 @@ export function activate(context: vscode.ExtensionContext) {
             continue
           }
           const errorMarkdown = parseDiagnostic(diagnostic, options)
-          console.log({ errorMarkdown })
           if (errorMarkdown) {
             items.push({
               range: diagnostic.range,
