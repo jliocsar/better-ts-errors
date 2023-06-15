@@ -9,10 +9,7 @@ import {
   defaultTypeScriptErrorDiagnosticMarkdownOptions,
 } from '../../markdown'
 
-import {
-  TYPESCRIPT_ERROR_BOUNDARY,
-  categoryIconMap,
-} from './markdown.constants'
+import { categoryIconMap } from './markdown.constants'
 
 type TypeScriptErrorMatch = {
   category: ts.DiagnosticCategory
@@ -20,6 +17,7 @@ type TypeScriptErrorMatch = {
   match: RegExp
 }
 let diagnosticMessages: Map<number, TypeScriptErrorMatch> | null = null
+let possibleDiagnosticMessages: string[]
 
 const renderer = new MarkdownIt({
   html: true,
@@ -35,31 +33,28 @@ const renderer = new MarkdownIt({
 })
 export const parseMarkdown = (markdown: string) => renderer.render(markdown)
 
-const createTypeScriptErrorMarkdownTemplate =
+export const createTypeScriptErrorMarkdownTemplate =
   (
     options: TypeScriptErrorDiagnosticMarkdownOptions = defaultTypeScriptErrorDiagnosticMarkdownOptions,
   ) =>
   (
-    error: {
-      category: ts.DiagnosticCategory
-      markdown: string
-    },
-    index: number,
+    diagnosticCode: number,
+    error: { category: ts.DiagnosticCategory; markdown: string },
   ) => {
     const { markdown: errorMarkdown, category } = error
-    const errorPosition = index + 1
     const { prettify, useStyles } = options
-    let title = `**Error #${errorPosition}:**`
+    let title = `**Error**`
 
     if (useStyles) {
-      title = `### Error ${errorPosition}`
+      title = `### Error`
     } else if (prettify) {
       const icon = categoryIconMap[category] ?? categoryIconMap.Message
-      title = `**\`${icon} Error #${errorPosition}\`**`
+      title = `**\`${icon} Error\`**`
     }
 
     return `
 ${title}
+[(ts ${diagnosticCode})](https://typescript.tv/errors/#TS${diagnosticCode})
 
 ${errorMarkdown}
 
@@ -71,19 +66,20 @@ const translateErrorToMarkdown = (
   errorMatch: TypeScriptErrorMatch,
   errorMessage: string,
 ) => {
-  const { match, template } = errorMatch
+  const { match } = errorMatch
   const matchResult = errorMessage.matchAll(match)
   if (!matchResult) {
     throw new Error('Invalid error message provided')
   }
-  const [matched] = [...matchResult]
-  const [, ...snippets] = matched
-  return removeTrailingDot(template)
-    .replace(/'\{\d\}'/g, value => {
-      const index = Number(value.replace(/['\{\}]/g, ''))
-      return createTypeScriptCodeblock(snippets[index].toString())
-    })
-    .replace(/'\w+'/g, createTypeScriptCodeblock)
+  const [matched] = Array.from(matchResult)
+  if (!matched) {
+    throw new Error(`Failed to match "${errorMessage}"`)
+  }
+  const [originalError, ...snippets] = matched
+  return snippets.reduce(
+    (error, snippet) => error.replace(snippet, createTypeScriptCodeblock),
+    originalError,
+  )
 }
 
 const fetchDiagnosticMessages = async () => {
@@ -113,35 +109,32 @@ const fetchDiagnosticMessages = async () => {
   return fetchedMessages
 }
 
-export const createTypeScriptErrorsMarkdownTemplate = (
-  errors: {
-    category: ts.DiagnosticCategory
-    markdown: string
-  }[],
-  options: TypeScriptErrorDiagnosticMarkdownOptions,
-) => errors.map(createTypeScriptErrorMarkdownTemplate(options)).join('\n')
-
 const removeTrailingDot = (message: string) => message.replace(/\.$/, '')
 
 export const createTypeScriptCodeblock = (code: string) => {
-  const snippet = removeTrailingDot(code.replace(/^'/, '').replace(/'$/, ''))
+  const snippet = removeTrailingDot(
+    code.replace(/^'/g, '').replace(/'\.?$/g, ''),
+  )
   return ['\n```ts\n', snippet, '\n```\n'].join('')
 }
 
 export const translateDiagnosticToMarkdown = async (
-  code: number,
-  errorMessage: string,
+  diagnosticCode: number,
+  diagnosticErrorMessage: string,
 ) => {
   if (!diagnosticMessages) {
     diagnosticMessages = await fetchDiagnosticMessages()
+    possibleDiagnosticMessages = Array.from(diagnosticMessages.values()).map(
+      match => match.template,
+    )
   }
-  const errors = errorMessage.split(TYPESCRIPT_ERROR_BOUNDARY)
-  const errorMatch = diagnosticMessages.get(code)
+  // TODO: Handle all errors in the same message with the `TYPESCRIPT_ERROR_BOUNDARY` & "fastest-levenshtein"
+  const errorMatch = diagnosticMessages.get(diagnosticCode)
   if (!errorMatch) {
-    throw new Error('Unknown TypeScript error')
+    return null
   }
-  return errors.map(errorMessage => ({
+  return {
     category: errorMatch.category,
-    markdown: translateErrorToMarkdown(errorMatch, errorMessage),
-  }))
+    markdown: translateErrorToMarkdown(errorMatch, diagnosticErrorMessage),
+  }
 }

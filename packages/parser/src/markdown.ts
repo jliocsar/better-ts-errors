@@ -1,11 +1,8 @@
-import ts from 'typescript'
-import { request } from 'undici'
-
 import {
   translateDiagnosticToMarkdown,
-  createTypeScriptErrorsMarkdownTemplate,
   getThemeStyleTag,
   parseMarkdown,
+  createTypeScriptErrorMarkdownTemplate,
 } from './utils'
 
 export type TypeScriptErrorDiagnosticMarkdownOptions = {
@@ -20,7 +17,7 @@ export const defaultTypeScriptErrorDiagnosticMarkdownOptions: TypeScriptErrorDia
   }
 
 export const typeScriptErrorDiagnosticToMarkdown = async (
-  diagnosticCode: string | number | undefined,
+  diagnosticCode: number,
   diagnosticErrorMessage: string,
   createOptions?: TypeScriptErrorDiagnosticMarkdownOptions,
 ) => {
@@ -28,13 +25,15 @@ export const typeScriptErrorDiagnosticToMarkdown = async (
     ...defaultTypeScriptErrorDiagnosticMarkdownOptions,
     ...createOptions,
   }
-  const parsedErrors = await translateDiagnosticToMarkdown(
-    diagnosticCode as number,
+  const parsedError = await translateDiagnosticToMarkdown(
+    diagnosticCode,
     diagnosticErrorMessage,
   )
-  const errorCount = parsedErrors.length
+  if (!parsedError) {
+    throw new Error(`Failed to parse error "${diagnosticErrorMessage}"`)
+  }
   const typeScriptErrorsMarkdownTemplate =
-    createTypeScriptErrorsMarkdownTemplate(parsedErrors, options)
+    createTypeScriptErrorMarkdownTemplate(options)(diagnosticCode, parsedError)
   const template = options.useStyles
     ? [
         getThemeStyleTag(),
@@ -44,7 +43,5 @@ export const typeScriptErrorDiagnosticToMarkdown = async (
 
   return {
     template,
-    errorCount,
-    wasInvalidErrorMessage: !errorCount,
   }
 }

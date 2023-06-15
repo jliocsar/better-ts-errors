@@ -11,7 +11,7 @@ export const parseDiagnostic = async (
 ) => {
   try {
     const { template } = await parser.typeScriptErrorDiagnosticToMarkdown(
-      diagnostic.code,
+      diagnostic.code as number,
       diagnostic.message,
       {
         useStyles: false,
