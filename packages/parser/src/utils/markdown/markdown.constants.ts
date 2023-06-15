@@ -1,4 +1,12 @@
-export const TYPESCRIPT_SNIPPET_REGEX = /'([^'\\]*(?:\\.[^'\\]*)*)'/g
+import ts from 'typescript'
+
 export const TYPESCRIPT_ERROR_BOUNDARY = /\n\s+/g
-export const OBJECT_PROPERTIES_AND_REGEX = /\s\d+\s/gi
-export const PROPERTIES_LIST_REGEX = /:\s(.+),?$/
+
+export const categoryIconMap: {
+  [Category in keyof typeof ts.DiagnosticCategory]?: string
+} = {
+  Warning: '⚠️',
+  Error: '🛑',
+  Suggestion: '🙋‍♀️',
+  Message: '🦥',
+} as const

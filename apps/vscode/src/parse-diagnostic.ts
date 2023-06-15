@@ -5,16 +5,22 @@ import * as parser from '@better-ts-errors/parser/src'
 
 import type { Options } from './types'
 
-export const parseDiagnostic = (
+export const parseDiagnostic = async (
   diagnostic: vscode.Diagnostic,
   options: Options,
 ) => {
-  const { template } = parser.typeScriptErrorDiagnosticToMarkdown(
-    diagnostic.message,
-    {
-      useStyles: false,
-      prettify: options.prettify,
-    },
-  )
-  return new vscode.MarkdownString(template)
+  try {
+    const { template } = await parser.typeScriptErrorDiagnosticToMarkdown(
+      diagnostic.code,
+      diagnostic.message,
+      {
+        useStyles: false,
+        prettify: options.prettify,
+      },
+    )
+    return new vscode.MarkdownString(template)
+  } catch (error) {
+    console.error((error as Error).message)
+    return null
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@better-ts-errors/parser",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "dedent": "^0.7.0",
+    "escape-string-regexp": "^5.0.0",
     "highlight.js": "^11.5.1",
-    "markdown-it": "^13.0.1"
+    "markdown-it": "^13.0.1",
+    "undici": "^5.22.1"
   }
 }

@@ -1,5 +1,8 @@
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+import ts from 'typescript'
+import { request } from 'undici'
+import escapeStringRegexp from 'escape-string-regexp'
 
 import {
   TypeScriptErrorDiagnosticMarkdownOptions,
@@ -7,11 +10,16 @@ import {
 } from '../../markdown'
 
 import {
-  OBJECT_PROPERTIES_AND_REGEX,
-  PROPERTIES_LIST_REGEX,
   TYPESCRIPT_ERROR_BOUNDARY,
-  TYPESCRIPT_SNIPPET_REGEX,
+  categoryIconMap,
 } from './markdown.constants'
+
+type TypeScriptErrorMatch = {
+  category: ts.DiagnosticCategory
+  template: string
+  match: RegExp
+}
+let diagnosticMessages: Map<number, TypeScriptErrorMatch> | null = null
 
 const renderer = new MarkdownIt({
   html: true,
@@ -25,33 +33,20 @@ const renderer = new MarkdownIt({
     return code
   },
 })
-
-const createMarkdownItem = (item: string) =>
-  item.match(OBJECT_PROPERTIES_AND_REGEX) ? `\n${item}...` : `* ${item}`
-
-const createMarkdownList = (list: string) =>
-  `\n${list.split(', ').map(createMarkdownItem).join('\n')}`
-
-const replaceErrorPartsByMarkdown = (errorMessage: string) => {
-  let result = errorMessage
-
-  const matchedList = errorMessage.match(PROPERTIES_LIST_REGEX)
-  if (matchedList) {
-    const [originalList, commaSeparatedList] = matchedList
-    result = result.replace(
-      originalList,
-      createMarkdownList(commaSeparatedList),
-    )
-  }
-
-  return result
-}
+export const parseMarkdown = (markdown: string) => renderer.render(markdown)
 
 const createTypeScriptErrorMarkdownTemplate =
   (
     options: TypeScriptErrorDiagnosticMarkdownOptions = defaultTypeScriptErrorDiagnosticMarkdownOptions,
   ) =>
-  (errorMessage: string, index: number) => {
+  (
+    error: {
+      category: ts.DiagnosticCategory
+      markdown: string
+    },
+    index: number,
+  ) => {
+    const { markdown: errorMarkdown, category } = error
     const errorPosition = index + 1
     const { prettify, useStyles } = options
     let title = `**Error #${errorPosition}:**`
@@ -59,57 +54,94 @@ const createTypeScriptErrorMarkdownTemplate =
     if (useStyles) {
       title = `### Error ${errorPosition}`
     } else if (prettify) {
-      title = `**\`⚠️ Error #${errorPosition}\`**`
+      const icon = categoryIconMap[category] ?? categoryIconMap.Message
+      title = `**\`${icon} Error #${errorPosition}\`**`
     }
 
     return `
 ${title}
 
-${errorMessage}
+${errorMarkdown}
 
 ${!options.useStyles ? '\n---' : ''}
 `.trim()
   }
 
-const higienizeErrorCandidate = (errorCandidate: string) =>
-  errorCandidate.trim()
-
-const mapErrorsToMarkdown = (errorMessage: string, errors: string[]) =>
-  [...new Set(errors)].reduce(
-    (result, error) => result.replace(error, createTypeScriptCodeblock),
-    errorMessage,
-  )
-
-const translateErrorToMarkdown = (errorMessage: string) => {
-  const errorCandidates = errorMessage
-    .trim()
-    .match(TYPESCRIPT_SNIPPET_REGEX)
-    ?.map(higienizeErrorCandidate)
-
-  if (!errorCandidates) {
-    return errorMessage
+const translateErrorToMarkdown = (
+  errorMatch: TypeScriptErrorMatch,
+  errorMessage: string,
+) => {
+  const { match, template } = errorMatch
+  const matchResult = errorMessage.matchAll(match)
+  if (!matchResult) {
+    throw new Error('Invalid error message provided')
   }
-
-  const codeBlockedError = mapErrorsToMarkdown(errorMessage, errorCandidates)
-  return replaceErrorPartsByMarkdown(codeBlockedError)
+  const [matched] = [...matchResult]
+  const [, ...snippets] = matched
+  return removeTrailingDot(template)
+    .replace(/'\{\d\}'/g, value => {
+      const index = Number(value.replace(/['\{\}]/g, ''))
+      return createTypeScriptCodeblock(snippets[index].toString())
+    })
+    .replace(/'\w+'/g, createTypeScriptCodeblock)
 }
 
-export const parseMarkdown = (markdown: string) => renderer.render(markdown)
+const fetchDiagnosticMessages = async () => {
+  const { statusCode, body } = await request(
+    `https://raw.githubusercontent.com/microsoft/TypeScript/v${ts.version.toString()}/src/compiler/diagnosticMessages.json`,
+  )
+  if (statusCode !== 200) {
+    throw new Error('Failed to fetch diagnostic messages')
+  }
+  const entries: [string, { category: ts.DiagnosticCategory; code: number }][] =
+    Object.entries(await body.json())
+  const fetchedMessages: typeof diagnosticMessages = new Map()
+  for (const [errorMessage, errorMeta] of entries) {
+    const match = new RegExp(
+      escapeStringRegexp(removeTrailingDot(errorMessage)).replace(
+        /'\\{\d\\}'/g,
+        '(.+)',
+      ),
+      'gi',
+    )
+    fetchedMessages.set(errorMeta.code, {
+      match,
+      category: errorMeta.category,
+      template: errorMessage,
+    })
+  }
+  return fetchedMessages
+}
 
 export const createTypeScriptErrorsMarkdownTemplate = (
-  errors: string[],
+  errors: {
+    category: ts.DiagnosticCategory
+    markdown: string
+  }[],
   options: TypeScriptErrorDiagnosticMarkdownOptions,
 ) => errors.map(createTypeScriptErrorMarkdownTemplate(options)).join('\n')
 
+const removeTrailingDot = (message: string) => message.replace(/\.$/, '')
+
 export const createTypeScriptCodeblock = (code: string) => {
-  const snippet = code.replace(/'/g, '')
+  const snippet = removeTrailingDot(code.replace(/^'/, '').replace(/'$/, ''))
   return ['\n```ts\n', snippet, '\n```\n'].join('')
 }
 
-export const translateDiagnosticToMarkdown = (errorMessage: string) => {
-  const higienizedErrorMessage = errorMessage
-    .replace(/\.$/, '')
-    .replace(/|\s{2,}/, '')
-  const errors = higienizedErrorMessage.split(TYPESCRIPT_ERROR_BOUNDARY)
-  return errors.map(translateErrorToMarkdown)
+export const translateDiagnosticToMarkdown = async (
+  code: number,
+  errorMessage: string,
+) => {
+  if (!diagnosticMessages) {
+    diagnosticMessages = await fetchDiagnosticMessages()
+  }
+  const errors = errorMessage.split(TYPESCRIPT_ERROR_BOUNDARY)
+  const errorMatch = diagnosticMessages.get(code)
+  if (!errorMatch) {
+    throw new Error('Unknown TypeScript error')
+  }
+  return errors.map(errorMessage => ({
+    category: errorMatch.category,
+    markdown: translateErrorToMarkdown(errorMatch, errorMessage),
+  }))
 }

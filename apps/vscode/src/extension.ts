@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
   )
 
   context.subscriptions.push(
-    vscode.languages.onDidChangeDiagnostics(event => {
+    vscode.languages.onDidChangeDiagnostics(async event => {
       const { uris } = event
 
       for (const uri of uris) {
@@ -81,7 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
           if (diagnostic.source !== 'ts') {
             continue
           }
-          const errorMarkdown = parseDiagnostic(diagnostic, options)
+          const errorMarkdown = await parseDiagnostic(diagnostic, options)
           if (errorMarkdown) {
             items.push({
               range: diagnostic.range,

@@ -1,3 +1,6 @@
+import ts from 'typescript'
+import { request } from 'undici'
+
 import {
   translateDiagnosticToMarkdown,
   createTypeScriptErrorsMarkdownTemplate,
@@ -16,7 +19,8 @@ export const defaultTypeScriptErrorDiagnosticMarkdownOptions: TypeScriptErrorDia
     prettify: false,
   }
 
-export const typeScriptErrorDiagnosticToMarkdown = (
+export const typeScriptErrorDiagnosticToMarkdown = async (
+  diagnosticCode: string | number | undefined,
   diagnosticErrorMessage: string,
   createOptions?: TypeScriptErrorDiagnosticMarkdownOptions,
 ) => {
@@ -24,7 +28,10 @@ export const typeScriptErrorDiagnosticToMarkdown = (
     ...defaultTypeScriptErrorDiagnosticMarkdownOptions,
     ...createOptions,
   }
-  const parsedErrors = translateDiagnosticToMarkdown(diagnosticErrorMessage)
+  const parsedErrors = await translateDiagnosticToMarkdown(
+    diagnosticCode as number,
+    diagnosticErrorMessage,
+  )
   const errorCount = parsedErrors.length
   const typeScriptErrorsMarkdownTemplate =
     createTypeScriptErrorsMarkdownTemplate(parsedErrors, options)

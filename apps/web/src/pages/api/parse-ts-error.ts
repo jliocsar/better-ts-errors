@@ -2,12 +2,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { ResponseData } from '~/types/response'
-import { typeScriptErrorDiagnosticToMarkdown } from '@better-ts-errors/parser'
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>,
 ) {
-  const response = typeScriptErrorDiagnosticToMarkdown(req.body)
-  return res.status(200).json(response)
+  return res.status(400).json({
+    template: 'Sorry, this is not working',
+    errorCount: 0,
+    wasInvalidErrorMessage: false,
+  })
 }
