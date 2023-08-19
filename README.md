@@ -17,8 +17,6 @@ This project was highly inspired by [ts-error-translator](https://github.com/mat
 
 ```jsonc
 {
-  // Disables the error messages if set to `false`.
-  "betterTypeScriptErrors.showParsedMessages": true,
   // Prettifies the response with emojis and such.
   "betterTypeScriptErrors.prettify": true
 }

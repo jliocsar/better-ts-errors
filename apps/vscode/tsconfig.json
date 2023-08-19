@@ -6,7 +6,6 @@
 		"outDir": "out",
 		"lib": ["ES2020"],
 		"sourceMap": true,
-		"rootDir": "src",
 		"strict": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
@@ -14,7 +13,7 @@
 		"esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
-      "@better-ts-errors/parser": ["../../packages/parser/src"],
+      "@better-ts-errors/formatter": ["../../packages/formatter/src"],
       "~/*": ["src/*"]
     }
   }

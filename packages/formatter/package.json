@@ -1,0 +1,15 @@
+{
+  "name": "@better-ts-errors/formatter",
+  "version": "0.2.1",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --loader @esbuild-kit/esm-loader src/example.ts"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "fastest-levenshtein": "^1.0.16",
+    "undici": "^5.22.1",
+    "vscode-uri": "^3.0.7"
+  }
+}
