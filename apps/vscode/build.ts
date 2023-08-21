@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '../..')
 
 //
 ;(async () => {
-  const log = (message: string) => stdout.write('[🍕] ' + message)
+  const log = (message: string) => stdout.write('[🍕] ' + message + '\n')
 
   try {
     log('Building extension...')
