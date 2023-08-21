@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@esbuild-kit/cjs-loader@^2.4.2":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@esbuild-kit/cjs-loader/-/cjs-loader-2.4.2.tgz#cb4dde00fbf744a68c4f20162ea15a8242d0fa54"
+  integrity sha512-BDXFbYOJzT/NBEtp71cvsrGPwGAMGRB/349rwKuoxNSiKjPraNNnlK6MIIabViCjqZugu6j+xeMDlEkWdHHJSg==
+  dependencies:
+    "@esbuild-kit/core-utils" "^3.0.0"
+    get-tsconfig "^4.4.0"
+
 "@esbuild-kit/core-utils@^3.0.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@esbuild-kit/core-utils/-/core-utils-3.1.0.tgz#49945d533dbd5e1b7620aa0fc522c15e6ec089c5"
@@ -10,7 +18,7 @@
     esbuild "~0.17.6"
     source-map-support "^0.5.21"
 
-"@esbuild-kit/esm-loader@^2.2.0":
+"@esbuild-kit/esm-loader@^2.5.5":
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/@esbuild-kit/esm-loader/-/esm-loader-2.5.5.tgz#b82da14fcee3fc1d219869756c06f43f67d1ca71"
   integrity sha512-Qwfvj/qoPbClxCRNuac1Du01r9gvNOT+pMYtJDapfB1eoGN1YlJ1BixLyL9WVENRx5RXgNLdfYdx/CuswlGhMw==
@@ -601,6 +609,11 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
+fsevents@~2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
+
 get-tsconfig@^4.4.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/get-tsconfig/-/get-tsconfig-4.7.0.tgz#06ce112a1463e93196aa90320c35df5039147e34"
@@ -926,6 +939,17 @@ tsutils@^3.21.0:
   integrity sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==
   dependencies:
     tslib "^1.8.1"
+
+tsx@^3.12.7:
+  version "3.12.7"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-3.12.7.tgz#b3b8b0fc79afc8260d1e14f9e995616c859a91e9"
+  integrity sha512-C2Ip+jPmqKd1GWVQDvz/Eyc6QJbGfE7NrR3fx5BpEHMZsEHoIxHL1j+lKdGobr8ovEyqeNkPLSKp6SCSOt7gmw==
+  dependencies:
+    "@esbuild-kit/cjs-loader" "^2.4.2"
+    "@esbuild-kit/core-utils" "^3.0.0"
+    "@esbuild-kit/esm-loader" "^2.5.5"
+  optionalDependencies:
+    fsevents "~2.3.2"
 
 typescript@^4.6.4:
   version "4.9.5"

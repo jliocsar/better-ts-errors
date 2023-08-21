@@ -1,15 +1,21 @@
 import * as vscode from 'vscode'
 
 import {
-  fetchDiagnosticMessages,
-  createTypeScriptErrorMarkdownTemplate,
-  TFormatOptions,
+  type TFormatOptions,
+  type TTypeScriptDiagnosticMessageFormatter,
+  loadDiagnosticMessages,
+  createTypeScriptErrorMarkdownTemplateFactory,
+  createTypeScriptDiagnosticMessageFormatter,
 } from '@better-ts-errors/formatter'
 
 type TUriStoreValue = {
   range: vscode.Range
   contents: string[]
 }
+type TVSCodeDiagnosticFormatter = (
+  diagnostic: vscode.Diagnostic,
+  options?: TFormatOptions,
+) => string | null
 
 const EXTENSION_OPTION_KEY = 'betterTypeScriptErrors'
 const defaultOptions: TFormatOptions = {
@@ -40,47 +46,51 @@ const provideHover: vscode.HoverProvider['provideHover'] = (
   return itemInRange
 }
 
-export const parseDiagnostic = (
-  diagnostic: vscode.Diagnostic,
-  { prettify }: TFormatOptions,
-) => {
-  try {
-    const template = createTypeScriptErrorMarkdownTemplate(diagnostic, {
-      prettify,
-    })
-    if (!template) {
+export const createVSCodeTypeScriptDiagnosticParser =
+  (
+    formatTypeScriptDiagnosticMessage: TTypeScriptDiagnosticMessageFormatter,
+  ): TVSCodeDiagnosticFormatter =>
+  (diagnostic, { prettify = false } = {}) => {
+    try {
+      const createTemplate = createTypeScriptErrorMarkdownTemplateFactory(
+        formatTypeScriptDiagnosticMessage,
+      )
+      const template = createTemplate(diagnostic, { prettify })
+      if (!template) {
+        return null
+      }
+      return template
+    } catch (error) {
+      console.error((error as Error).message)
       return null
     }
-    return template
-  } catch (error) {
-    console.error((error as Error).message)
-    return null
   }
-}
 
-const handleDiagnosticsChange = async (event: vscode.DiagnosticChangeEvent) => {
-  const { uris } = event
+const handleDiagnosticsChange =
+  (formatVSCodeDiagnosticMessage: TVSCodeDiagnosticFormatter) =>
+  async (event: vscode.DiagnosticChangeEvent) => {
+    const { uris } = event
 
-  for (const uri of uris) {
-    const items: TUriStoreValue[] = []
-    const diagnostics = vscode.languages.getDiagnostics(uri)
+    for (const uri of uris) {
+      const items: TUriStoreValue[] = []
+      const diagnostics = vscode.languages.getDiagnostics(uri)
 
-    for (const diagnostic of diagnostics) {
-      if (diagnostic.source !== 'ts') {
-        continue
+      for (const diagnostic of diagnostics) {
+        if (diagnostic.source !== 'ts') {
+          continue
+        }
+        const errorMarkdown = formatVSCodeDiagnosticMessage(diagnostic, options)
+        if (errorMarkdown) {
+          items.push({
+            range: diagnostic.range,
+            contents: [errorMarkdown],
+          })
+        }
       }
-      const errorMarkdown = parseDiagnostic(diagnostic, options)
-      if (errorMarkdown) {
-        items.push({
-          range: diagnostic.range,
-          contents: [errorMarkdown],
-        })
-      }
+
+      uriStore[uri.path] = items
     }
-
-    uriStore[uri.path] = items
   }
-}
 
 const handleConfigurationChange = (event: vscode.ConfigurationChangeEvent) => {
   if (event.affectsConfiguration(EXTENSION_OPTION_KEY)) {
@@ -90,15 +100,22 @@ const handleConfigurationChange = (event: vscode.ConfigurationChangeEvent) => {
 
 export const activate = async (context: vscode.ExtensionContext) => {
   console.info('Activating `better-ts-errors`')
-  await fetchDiagnosticMessages()
   updateOptions()
+  const DMap = await loadDiagnosticMessages()
+  const formatTypeScriptDiagnosticMessage =
+    createTypeScriptDiagnosticMessageFormatter(DMap)
+  const formatVSCodeDiagnosticMessage = createVSCodeTypeScriptDiagnosticParser(
+    formatTypeScriptDiagnosticMessage,
+  )
 
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(['typescript', 'typescriptreact'], {
       provideHover,
     }),
     vscode.workspace.onDidChangeConfiguration(handleConfigurationChange),
-    vscode.languages.onDidChangeDiagnostics(handleDiagnosticsChange),
+    vscode.languages.onDidChangeDiagnostics(
+      handleDiagnosticsChange(formatVSCodeDiagnosticMessage),
+    ),
   )
 }
 

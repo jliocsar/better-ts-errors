@@ -1,1 +1,1 @@
-export * from './format-vscode-diagnostics'
+export * from './format-diagnostics'
