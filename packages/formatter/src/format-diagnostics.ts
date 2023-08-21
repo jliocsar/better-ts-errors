@@ -1,10 +1,7 @@
-import * as fs from 'fs/promises'
-import * as path from 'path'
-
 import * as vscode from 'vscode'
 import { URI } from 'vscode-uri'
 
-import { type TDiagnosticSeverity, CategoryIconMap, ROOT } from './constants'
+import { type TDiagnosticSeverity, CategoryIconMap } from './constants'
 
 export type TFormatOptions = {
   prettify?: boolean
@@ -77,12 +74,10 @@ const whysToMarkdown = (whys: string[]) => {
   return formatted
 }
 
-export const loadDiagnosticMessages = async () => {
-  const buffer = await fs.readFile(
-    path.resolve(ROOT, 'diagnostic-messages.json'),
-  )
-  return JSON.parse(buffer.toString())
-}
+export const loadDiagnosticMessages = () =>
+  /** this is injected by esbuild using `define` */
+  // @ts-ignore
+  __INJECTED_DMAP__
 
 export const createTypeScriptDiagnosticMessageFormatter =
   (DMap: TDMap): TTypeScriptDiagnosticMessageFormatter =>
