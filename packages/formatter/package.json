@@ -1,6 +1,6 @@
 {
   "name": "@better-ts-errors/formatter",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -8,8 +8,6 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "fastest-levenshtein": "^1.0.16",
-    "undici": "^5.22.1",
     "vscode-uri": "^3.0.7"
   }
 }

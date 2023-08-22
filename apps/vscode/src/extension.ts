@@ -81,10 +81,17 @@ const handleDiagnosticsChange =
         }
         const errorMarkdown = formatVSCodeDiagnosticMessage(diagnostic, options)
         if (errorMarkdown) {
-          items.push({
-            range: diagnostic.range,
-            contents: [errorMarkdown],
-          })
+          const existingRangeIndex = items.findIndex(item =>
+            item.range.isEqual(diagnostic.range),
+          )
+          if (~existingRangeIndex) {
+            items[existingRangeIndex].contents.push(errorMarkdown)
+          } else {
+            items.push({
+              range: diagnostic.range,
+              contents: [errorMarkdown],
+            })
+          }
         }
       }
 
@@ -101,10 +108,7 @@ const handleConfigurationChange = (event: vscode.ConfigurationChangeEvent) => {
 export const activate = async (context: vscode.ExtensionContext) => {
   console.info('Activating `better-ts-errors`')
   updateOptions()
-  console.info('Loading diagn')
   const DMap = await loadDiagnosticMessages()
-  console.info('Loaded diagn')
-  console.log(DMap)
   const formatTypeScriptDiagnosticMessage =
     createTypeScriptDiagnosticMessageFormatter(DMap)
   const formatVSCodeDiagnosticMessage = createVSCodeTypeScriptDiagnosticParser(
