@@ -7,6 +7,8 @@ import { TDiagnosticMessages } from '@better-ts-errors/formatter/src'
 
 export const ROOT = path.resolve(__dirname, '..')
 
+export const log = (message: string) => console.log('[🍕] ', message)
+
 const diagnosticMessagesToMap = (diagnosticMessages: TDiagnosticMessages) => {
   const map: { [code: number]: string } = {}
   const entries = Object.entries(diagnosticMessages)
@@ -30,12 +32,15 @@ const fetchDiagnosticMessages = async () => {
 
 ;(async () => {
   try {
+    log('Fetching diagnostic messages...')
     // DMap stands for `DiagnosticMessagesMap`
     const DMap = await fetchDiagnosticMessages()
+    log('Writing diagnostic messages to JSON file...')
     await fs.writeFile(
       path.resolve(ROOT, 'diagnostic-messages.json'),
       JSON.stringify(DMap),
     )
+    log('✅ Done!')
     exit()
   } catch (error) {
     console.error(error)

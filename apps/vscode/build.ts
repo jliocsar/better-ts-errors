@@ -1,15 +1,15 @@
 import * as path from 'path'
 import * as fs from 'fs/promises'
-import { stdout, stderr, exit } from 'process'
+import { exit } from 'process'
 
 import * as esbuild from 'esbuild'
+
+import { log } from '../../scripts/fetch-diagnostic-messages'
 
 const ROOT = path.resolve(__dirname, '../..')
 
 //
 ;(async () => {
-  const log = (message: string) => stdout.write('[🍕] ' + message + '\n')
-
   try {
     log('Building extension...')
     log(' Reading diagnostic messages...')
@@ -33,7 +33,7 @@ const ROOT = path.resolve(__dirname, '../..')
     })
     log('✅ Build done!')
   } catch (error) {
-    stderr.write((error as Error).message)
+    console.error((error as Error).message)
     exit(1)
   }
 })()
