@@ -79,27 +79,31 @@ const handleDiagnosticsChange =
       let errorIndex = 0
 
       while (errorIndex < diagnosticsLength) {
-        const diagnostic = diagnostics[errorIndex]
-        if (diagnostic.source !== 'ts') {
-          continue
-        }
-        const errorMarkdown = formatVSCodeDiagnosticMessage(
-          errorIndex,
-          diagnostic,
-          options,
-        )
-        if (errorMarkdown) {
-          const existingRangeIndex = items.findIndex(item =>
-            item.range.isEqual(diagnostic.range),
-          )
-          if (~existingRangeIndex) {
-            items[existingRangeIndex].contents.push(errorMarkdown)
-          } else {
-            items.push({
-              range: diagnostic.range,
-              contents: [errorMarkdown],
-            })
+        try {
+          const diagnostic = diagnostics[errorIndex]
+          if (diagnostic.source !== 'ts') {
+            continue
           }
+          const errorMarkdown = formatVSCodeDiagnosticMessage(
+            errorIndex,
+            diagnostic,
+            options,
+          )
+          if (errorMarkdown) {
+            const existingRangeIndex = items.findIndex(item =>
+              item.range.isEqual(diagnostic.range),
+            )
+            if (~existingRangeIndex) {
+              items[existingRangeIndex].contents.push(errorMarkdown)
+            } else {
+              items.push({
+                range: diagnostic.range,
+                contents: [errorMarkdown],
+              })
+            }
+          }
+        } catch (error) {
+          console.error((error as Error).message)
         }
         errorIndex++
       }

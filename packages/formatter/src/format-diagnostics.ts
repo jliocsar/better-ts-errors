@@ -60,20 +60,22 @@ const relatedInformationToMarkdownLink = ({
 
 const whysToMarkdown = (whys: string[]) => {
   const formatted = []
-  let index = 0
   const length = whys.length
-  while (index < length) {
+  for (let index = 0; index < length; index++) {
     const why = whys[index]
-    formatted.push(
-      why.replace(
+    try {
+      const formattedWhy = why.replace(
         /(\s+)(.*)/,
         (_match, spaces, text) =>
           `${spaces}* \`${
             index ? `Because ${text[0].toLowerCase() + text.slice(1)}` : text
           }\``,
-      ),
-    )
-    index++
+      )
+      formatted.push(formattedWhy)
+    } catch (error) {
+      console.error((error as Error).message)
+      continue
+    }
   }
   return formatted
 }
@@ -103,12 +105,16 @@ export const createTypeScriptDiagnosticMessageFormatter =
         return null
       }
       const [, ...snippets] = matchedSnippetsResult
-      while (snippets.length) {
-        const snippet = snippets.shift()!
-        formattedReason = formattedReason.replace(
-          snippet,
-          snippetToMarkdownBlock,
-        )
+      for (const snippet of snippets) {
+        try {
+          formattedReason = formattedReason.replace(
+            snippet,
+            snippetToMarkdownBlock,
+          )
+        } catch (error) {
+          console.error((error as Error).message)
+          continue
+        }
       }
       formattedReason = removeTrailingDots(formattedReason)
     }
