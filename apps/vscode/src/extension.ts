@@ -13,6 +13,7 @@ type TUriStoreValue = {
   contents: string[]
 }
 type TVSCodeDiagnosticFormatter = (
+  errorIndex: number,
   diagnostic: vscode.Diagnostic,
   options?: TFormatOptions,
 ) => string | null
@@ -50,12 +51,12 @@ export const createVSCodeTypeScriptDiagnosticParser =
   (
     formatTypeScriptDiagnosticMessage: TTypeScriptDiagnosticMessageFormatter,
   ): TVSCodeDiagnosticFormatter =>
-  (diagnostic, { prettify = false } = {}) => {
+  (errorIndex, diagnostic, { prettify = false } = {}) => {
     try {
       const createTemplate = createTypeScriptErrorMarkdownTemplateFactory(
         formatTypeScriptDiagnosticMessage,
       )
-      const template = createTemplate(diagnostic, { prettify })
+      const template = createTemplate(errorIndex, diagnostic, { prettify })
       if (!template) {
         return null
       }
@@ -74,12 +75,19 @@ const handleDiagnosticsChange =
     for (const uri of uris) {
       const items: TUriStoreValue[] = []
       const diagnostics = vscode.languages.getDiagnostics(uri)
+      const diagnosticsLength = diagnostics.length
+      let errorIndex = 0
 
-      for (const diagnostic of diagnostics) {
+      while (errorIndex < diagnosticsLength) {
+        const diagnostic = diagnostics[errorIndex]
         if (diagnostic.source !== 'ts') {
           continue
         }
-        const errorMarkdown = formatVSCodeDiagnosticMessage(diagnostic, options)
+        const errorMarkdown = formatVSCodeDiagnosticMessage(
+          errorIndex,
+          diagnostic,
+          options,
+        )
         if (errorMarkdown) {
           const existingRangeIndex = items.findIndex(item =>
             item.range.isEqual(diagnostic.range),
@@ -93,6 +101,7 @@ const handleDiagnosticsChange =
             })
           }
         }
+        errorIndex++
       }
 
       uriStore[uri.path] = items

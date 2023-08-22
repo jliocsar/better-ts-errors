@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import { URI } from 'vscode-uri'
+import escapeStringRegexp from 'escape-string-regexp'
 
 import { type TDiagnosticSeverity, CategoryIconMap } from './constants'
 
@@ -35,12 +36,15 @@ type TVSCodeDiagnostic = {
 
 const removeTrailingDots = (value: string) => value.replace(/[\.,]\s?$/, '')
 
-const snippetToMarkdownBlock = (snippet: string) =>
-  `
+const snippetToMarkdownBlock = (snippet: string) => {
+  const unquoted = snippet.replace(/(^')/g, '').replace(/'$/, '')
+  console.log({ unquoted })
+  return `
 \`\`\`ts
-${snippet.replace(/^'|'$/g, '')}
+${unquoted}
 \`\`\`
 `
+}
 
 const relatedInformationToMarkdownLink = ({
   message,
@@ -52,7 +56,7 @@ const relatedInformationToMarkdownLink = ({
   const link = `${locationPath}#${rangeStart},${rangeEnd}`
   return `* \`${removeTrailingDots(
     message,
-  )}\`: [(${rangeStart}, ${rangeEnd}) 🔗](${link})`
+  )}\` [(${rangeStart}, ${rangeEnd}) 🔗](${link})`
 }
 
 const whysToMarkdown = (whys: string[]) => {
@@ -60,7 +64,7 @@ const whysToMarkdown = (whys: string[]) => {
   let index = 0
   const length = whys.length
   while (index < length) {
-    const why = whys[index++]
+    const why = whys[index]
     formatted.push(
       why.replace(
         /(\s+)(.*)/,
@@ -70,6 +74,7 @@ const whysToMarkdown = (whys: string[]) => {
           }\``,
       ),
     )
+    index++
   }
   return formatted
 }
@@ -87,7 +92,12 @@ export const createTypeScriptDiagnosticMessageFormatter =
     const matchedDiagnosticMessage = code ? DMap?.[code] : null
     if (matchedDiagnosticMessage) {
       const snippetsMatch = new RegExp(
-        matchedDiagnosticMessage.replace(/('\{\d+\}')/g, '(.+)'),
+        escapeStringRegexp(matchedDiagnosticMessage).replace(
+          // replaces the already escaped `{\d+}` with a regex that matches any string
+          // so we can replace the snippet parts with markdown code blocks
+          /('\\\{\d+\\\}')/g,
+          '(.+)',
+        ),
       )
       const matchedSnippetsResult = message.match(snippetsMatch)
       if (!matchedSnippetsResult) {
@@ -111,13 +121,15 @@ export const createTypeScriptDiagnosticMessageFormatter =
 export const createTypeScriptErrorMarkdownTemplateFactory =
   (formatTypeScriptDiagnosticMessage: TTypeScriptDiagnosticMessageFormatter) =>
   (
+    errorIndex: number,
     { message, severity, code, relatedInformation }: TVSCodeDiagnostic,
     { prettify = false }: TFormatOptions,
   ) => {
-    let title = `**Error**`
+    const errorNum = errorIndex + 1
+    let title = `**Error** #${errorNum}`
     if (prettify) {
       const icon = CategoryIconMap[severity] ?? CategoryIconMap.Message
-      title = `**\`${icon} Error\`**`
+      title = `**\`${icon} Error #${errorNum}\`**`
     }
 
     const formatted = formatTypeScriptDiagnosticMessage(

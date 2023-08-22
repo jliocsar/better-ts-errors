@@ -8,6 +8,7 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "escape-string-regexp": "^5.0.0",
     "vscode-uri": "^3.0.7"
   }
 }
