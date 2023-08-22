@@ -38,7 +38,6 @@ const removeTrailingDots = (value: string) => value.replace(/[\.,]\s?$/, '')
 
 const snippetToMarkdownBlock = (snippet: string) => {
   const unquoted = snippet.replace(/(^')/g, '').replace(/'$/, '')
-  console.log({ unquoted })
   return `
 \`\`\`ts
 ${unquoted}

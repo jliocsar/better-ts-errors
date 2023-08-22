@@ -5,9 +5,9 @@ import { exit } from 'process'
 import { request } from 'undici'
 import { TDiagnosticMessages } from '@better-ts-errors/formatter/src'
 
-export const ROOT = path.resolve(__dirname, '..')
+import { log } from './utils'
 
-export const log = (message: string) => console.log('[🍕] ', message)
+export const ROOT = path.resolve(__dirname, '..')
 
 const diagnosticMessagesToMap = (diagnosticMessages: TDiagnosticMessages) => {
   const map: { [code: number]: string } = {}

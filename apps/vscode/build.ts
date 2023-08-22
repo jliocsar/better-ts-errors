@@ -4,7 +4,7 @@ import { exit } from 'process'
 
 import * as esbuild from 'esbuild'
 
-import { log } from '../../scripts/fetch-diagnostic-messages'
+import { log } from '../../scripts/utils'
 
 const ROOT = path.resolve(__dirname, '../..')
 
