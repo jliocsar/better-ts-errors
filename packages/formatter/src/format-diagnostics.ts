@@ -1,6 +1,5 @@
 import * as vscode from 'vscode'
 import { URI } from 'vscode-uri'
-import escapeStringRegexp from 'escape-string-regexp'
 
 import { type TDiagnosticSeverity, CategoryIconMap } from './constants'
 
@@ -93,10 +92,10 @@ export const createTypeScriptDiagnosticMessageFormatter =
     const matchedDiagnosticMessage = code ? DMap?.[code] : null
     if (matchedDiagnosticMessage) {
       const snippetsMatch = new RegExp(
-        escapeStringRegexp(matchedDiagnosticMessage).replace(
+        matchedDiagnosticMessage.replace(
           // replaces the already escaped `{\d+}` with a regex that matches any string
           // so we can replace the snippet parts with markdown code blocks
-          /('\\\{\d+\\\}')/g,
+          /('\{\d+\}')/g,
           '(.+)',
         ),
       )
