@@ -71,7 +71,7 @@ const handleDiagnosticsChange =
   (formatVSCodeDiagnosticMessage: TVSCodeDiagnosticFormatter) =>
   async (event: vscode.DiagnosticChangeEvent) => {
     const shouldHandleEvent = 'uris' in event && event.uris.length
-    if (shouldHandleEvent) {
+    if (!shouldHandleEvent) {
       return
     }
     uriStore = {}
