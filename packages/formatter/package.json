@@ -1,6 +1,6 @@
 {
   "name": "@better-ts-errors/formatter",
-  "version": "0.3.6",
+  "version": "0.3.8",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "escape-string-regexp": "^5.0.0",
     "vscode-uri": "^3.0.7"
   }
 }

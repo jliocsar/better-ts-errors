@@ -23,7 +23,7 @@ const defaultOptions: TFormatOptions = {
   prettify: false,
 }
 
-const uriStore: Record<vscode.Uri['path'], TUriStoreValue[]> = {}
+let uriStore: Record<vscode.Uri['path'], TUriStoreValue[]> = {}
 let options = defaultOptions
 
 const updateOptions = () => {
@@ -70,18 +70,21 @@ export const createVSCodeTypeScriptDiagnosticParser =
 const handleDiagnosticsChange =
   (formatVSCodeDiagnosticMessage: TVSCodeDiagnosticFormatter) =>
   async (event: vscode.DiagnosticChangeEvent) => {
+    if (!('uris' in event) || !event.uris.length) {
+      return
+    }
+    uriStore = {}
     const { uris } = event
 
     for (const uri of uris) {
       const items: TUriStoreValue[] = []
       const diagnostics = vscode.languages.getDiagnostics(uri)
       const diagnosticsLength = diagnostics.length
-      let errorIndex = 0
 
-      while (errorIndex < diagnosticsLength) {
+      for (let errorIndex = 0; errorIndex < diagnosticsLength; errorIndex++) {
         try {
           const diagnostic = diagnostics[errorIndex]
-          if (diagnostic.source !== 'ts') {
+          if (!('source' in diagnostic) || diagnostic.source !== 'ts') {
             continue
           }
           const errorMarkdown = formatVSCodeDiagnosticMessage(
@@ -105,7 +108,6 @@ const handleDiagnosticsChange =
         } catch (error) {
           console.error((error as Error).message)
         }
-        errorIndex++
       }
 
       uriStore[uri.path] = items
@@ -118,10 +120,12 @@ const handleConfigurationChange = (event: vscode.ConfigurationChangeEvent) => {
   }
 }
 
+let DMap = null
+
 export const activate = async (context: vscode.ExtensionContext) => {
   console.info('Activating `better-ts-errors`')
   updateOptions()
-  const DMap = await loadDiagnosticMessages()
+  DMap ??= await loadDiagnosticMessages()
   const formatTypeScriptDiagnosticMessage =
     createTypeScriptDiagnosticMessageFormatter(DMap)
   const formatVSCodeDiagnosticMessage = createVSCodeTypeScriptDiagnosticParser(

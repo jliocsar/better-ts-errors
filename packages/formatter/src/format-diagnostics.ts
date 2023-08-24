@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import { URI } from 'vscode-uri'
+import escapeStringRegexp from 'escape-string-regexp'
 
 import { type TDiagnosticSeverity, CategoryIconMap } from './constants'
 
@@ -87,36 +88,37 @@ export const loadDiagnosticMessages = () =>
 export const createTypeScriptDiagnosticMessageFormatter =
   (DMap: TDMap): TTypeScriptDiagnosticMessageFormatter =>
   (code, message, relatedInformation) => {
+    const matchedDiagnosticMessage = code ? DMap?.[code] : null
+    if (!matchedDiagnosticMessage) {
+      return null
+    }
     const [reason, ...whys] = message.split(/\n/)
     let formattedReason = reason
-    const matchedDiagnosticMessage = code ? DMap?.[code] : null
-    if (matchedDiagnosticMessage) {
-      const snippetsMatch = new RegExp(
-        matchedDiagnosticMessage.replace(
-          // replaces the already escaped `{\d+}` with a regex that matches any string
-          // so we can replace the snippet parts with markdown code blocks
-          /('\{\d+\}')/g,
-          '(.+)',
-        ),
-      )
-      const matchedSnippetsResult = message.match(snippetsMatch)
-      if (!matchedSnippetsResult) {
-        return null
-      }
-      const [, ...snippets] = matchedSnippetsResult
-      for (const snippet of snippets) {
-        try {
-          formattedReason = formattedReason.replace(
-            snippet,
-            snippetToMarkdownBlock,
-          )
-        } catch (error) {
-          console.error((error as Error).message)
-          continue
-        }
-      }
-      formattedReason = removeTrailingDots(formattedReason)
+    const snippetsMatch = new RegExp(
+      escapeStringRegexp(matchedDiagnosticMessage).replace(
+        // replaces the already escaped `{\d+}` with a regex that matches any string
+        // so we can replace the snippet parts with markdown code blocks
+        /('\\\{\d+\\\}')/g,
+        '(.+)',
+      ),
+    )
+    const matchedSnippetsResult = message.match(snippetsMatch)
+    if (!matchedSnippetsResult) {
+      return null
     }
+    const [, ...snippets] = matchedSnippetsResult
+    for (const snippet of snippets) {
+      try {
+        formattedReason = formattedReason.replace(
+          snippet,
+          snippetToMarkdownBlock,
+        )
+      } catch (error) {
+        console.error((error as Error).message)
+        continue
+      }
+    }
+    formattedReason = removeTrailingDots(formattedReason)
     const formattedRelatedInformation =
       relatedInformation?.map(relatedInformationToMarkdownLink) ?? null
     return [formattedReason, whysToMarkdown(whys), formattedRelatedInformation]
@@ -129,13 +131,6 @@ export const createTypeScriptErrorMarkdownTemplateFactory =
     { message, severity, code, relatedInformation }: TVSCodeDiagnostic,
     { prettify = false }: TFormatOptions,
   ) => {
-    const errorNum = errorIndex + 1
-    let title = `**Error** #${errorNum}`
-    if (prettify) {
-      const icon = CategoryIconMap[severity] ?? CategoryIconMap.Message
-      title = `**\`${icon} Error #${errorNum}\`**`
-    }
-
     const formatted = formatTypeScriptDiagnosticMessage(
       Number(code),
       message,
@@ -143,6 +138,13 @@ export const createTypeScriptErrorMarkdownTemplateFactory =
     )
     if (!formatted) {
       return null
+    }
+
+    const errorNum = errorIndex + 1
+    let title = `**Error** #${errorNum}`
+    if (prettify) {
+      const icon = CategoryIconMap[severity] ?? CategoryIconMap.Message
+      title = `**\`${icon} Error #${errorNum}\`**`
     }
     const [formattedMessage, formattedWhys, formattedRelatedInformation] =
       formatted
