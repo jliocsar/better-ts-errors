@@ -70,7 +70,8 @@ export const createVSCodeTypeScriptDiagnosticParser =
 const handleDiagnosticsChange =
   (formatVSCodeDiagnosticMessage: TVSCodeDiagnosticFormatter) =>
   async (event: vscode.DiagnosticChangeEvent) => {
-    if (!('uris' in event) || !event.uris.length) {
+    const shouldHandleEvent = 'uris' in event && event.uris.length
+    if (shouldHandleEvent) {
       return
     }
     uriStore = {}
@@ -79,14 +80,18 @@ const handleDiagnosticsChange =
     for (const uri of uris) {
       const items: TUriStoreValue[] = []
       const diagnostics = vscode.languages.getDiagnostics(uri)
-      const diagnosticsLength = diagnostics.length
+      const typeScriptDiagnostics = diagnostics.filter(
+        diagnostic => 'source' in diagnostic && diagnostic.source === 'ts',
+      )
+      const typeScriptDiagnosticsLength = typeScriptDiagnostics.length
 
-      for (let errorIndex = 0; errorIndex < diagnosticsLength; errorIndex++) {
+      for (
+        let errorIndex = 0;
+        errorIndex < typeScriptDiagnosticsLength;
+        errorIndex++
+      ) {
         try {
-          const diagnostic = diagnostics[errorIndex]
-          if (!('source' in diagnostic) || diagnostic.source !== 'ts') {
-            continue
-          }
+          const diagnostic = typeScriptDiagnostics[errorIndex]
           const errorMarkdown = formatVSCodeDiagnosticMessage(
             errorIndex,
             diagnostic,
