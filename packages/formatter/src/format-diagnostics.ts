@@ -49,7 +49,7 @@ const relatedInformationToMarkdownLink = ({
   message,
   location,
 }: vscode.DiagnosticRelatedInformation) => {
-  const locationPath = URI.parse(location.uri.toString()).path
+  const locationPath = location.uri.path
   const rangeStart = location.range.start.line + 1
   const rangeEnd = location.range.end.character + 1
   const link = `${locationPath}#${rangeStart},${rangeEnd}`
