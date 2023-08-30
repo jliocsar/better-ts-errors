@@ -1,7 +1,7 @@
 {
   "name": "better-ts-errors",
   "displayName": "Better TS Errors",
-  "version": "1.7.8",
+  "version": "1.8.2",
   "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.66.0"
@@ -33,11 +33,6 @@
     "configuration": {
       "title": "Better TS Errors",
       "properties": {
-        "betterTypeScriptErrors.showParsedMessages": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show the parsed version of the error message"
-        },
         "betterTypeScriptErrors.prettify": {
           "type": "boolean",
           "default": false,
@@ -48,15 +43,9 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run build",
-    "build": "esbuild --minify --bundle --platform=\"node\" src/extension.ts --outfile=out/extension.js --external:vscode --format=cjs",
+    "build": "tsx build.ts",
     "publish": "npx vsce publish --yarn"
   },
   "dependencies": {},
-  "devDependencies": {
-    "@types/node": "^17.0.31",
-    "@types/vscode": "^1.66.0",
-    "esbuild": "^0.14.38",
-    "typescript": "^4.6.4",
-    "vscode": "^1.1.37"
-  }
+  "devDependencies": {}
 }
